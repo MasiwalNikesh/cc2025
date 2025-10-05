@@ -5,8 +5,67 @@ This guide provides step-by-step instructions for deploying the CORCON 2025 webs
 ## Production Details
 
 - **Domain**: webappindia.in
+- **Server IP**: 13.200.253.158
 - **Git Repository**: https://github.com/MasiwalNikesh/cc2025.git
 - **Server**: AWS Lightsail Node.js Instance
+
+## Quick Start
+
+To deploy to your Lightsail server (13.200.253.158) with Cloudflare:
+
+```bash
+# 1. SSH to server
+ssh ubuntu@13.200.253.158
+
+# 2. Clone repository
+cd /home/ubuntu
+git clone https://github.com/MasiwalNikesh/cc2025.git
+cd cc2025
+
+# 3. Install dependencies and build
+npm install
+npm run build
+
+# 4. Configure Nginx
+sudo cp nginx-cloudflare.conf /etc/nginx/sites-available/webappindia.in
+sudo ln -s /etc/nginx/sites-available/webappindia.in /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl restart nginx
+
+# 5. Start with PM2
+pm2 start ecosystem.config.js --env production
+pm2 save
+pm2 startup
+```
+
+For detailed instructions, see the deployment options below.
+
+---
+
+## Deployment Options
+
+### Option 1: Cloudflare SSL (Recommended) ⭐
+
+**For deployment with Cloudflare DNS and SSL**, please follow the comprehensive guide:
+
+📘 **[CLOUDFLARE-SETUP.md](./CLOUDFLARE-SETUP.md)**
+
+This complete guide includes:
+- ✅ Cloudflare DNS and SSL configuration
+- ✅ Server setup on 13.200.253.158
+- ✅ Nginx configuration optimized for Cloudflare
+- ✅ Performance and caching optimization
+- ✅ Security best practices
+- ✅ Comprehensive troubleshooting
+- ✅ Future deployment workflows
+
+**Use this option if:**
+- You're using Cloudflare for DNS
+- You want Cloudflare's CDN and DDoS protection
+- You prefer simplified SSL management
+
+### Option 2: Let's Encrypt SSL (Alternative)
+
+If you prefer to use Let's Encrypt instead of Cloudflare, follow the instructions below:
 
 ## Prerequisites
 
