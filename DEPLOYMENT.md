@@ -64,7 +64,7 @@ sudo ln -s /etc/nginx/sites-available/webappindia.in /etc/nginx/sites-enabled/
 sudo nginx -t && sudo systemctl restart nginx
 
 # 5. Start with PM2
-pm2 start ecosystem.config.js --env production
+pm2 start ecosystem.config.cjs --env production
 pm2 save
 pm2 startup
 ```
@@ -197,7 +197,7 @@ npm run build
 ### 5. Start the Application with PM2
 
 ```bash
-pm2 start ecosystem.config.js --env production
+pm2 start ecosystem.config.cjs --env production
 pm2 save
 pm2 startup
 ```
@@ -263,10 +263,10 @@ Follow the prompts to configure SSL. Certbot will automatically update your Ngin
 
 ### 3. Update Ecosystem Configuration
 
-Edit `ecosystem.config.js` and change the production port from 80 to 3000 (since Nginx will handle port 80/443):
+Edit `ecosystem.config.cjs` and change the production port from 80 to 3000 (since Nginx will handle port 80/443):
 
 ```bash
-nano ecosystem.config.js
+nano ecosystem.config.cjs
 ```
 
 Ensure `env_production.PORT` is set to `3000`.
@@ -424,7 +424,7 @@ location ~* \.(jpg|jpeg|png|gif|ico|css|js|svg|woff|woff2|ttf)$ {
 
 ### PM2 Cluster Mode
 
-For better performance, use cluster mode in `ecosystem.config.js`:
+For better performance, use cluster mode in `ecosystem.config.cjs`:
 
 ```javascript
 instances: 'max',  // Use all available CPUs

@@ -14,6 +14,8 @@ Official website for CORCON 2025 conference, built with React 19, TypeScript, an
 |----------|---------|
 | **[QUICK-REFERENCE.md](./QUICK-REFERENCE.md)** | Architecture, commands, checklist ⭐ **START HERE** |
 | **[CLOUDFLARE-SETUP.md](./CLOUDFLARE-SETUP.md)** | Complete deployment guide |
+| **[BITNAMI-DEPLOYMENT.md](./BITNAMI-DEPLOYMENT.md)** | Bitnami Node.js instance guide 🟠 |
+| **[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)** | Common errors and solutions 🔧 |
 | **[ALTERNATIVE-DEPLOYMENT.md](./ALTERNATIVE-DEPLOYMENT.md)** | Systemd & other PM2 alternatives |
 | **[DEPENDENCY-NOTES.md](./DEPENDENCY-NOTES.md)** | React 19 compatibility notes |
 | **[DEPLOYMENT.md](./DEPLOYMENT.md)** | General deployment info |
@@ -92,7 +94,7 @@ sudo ln -s /etc/nginx/sites-available/webappindia.in /etc/nginx/sites-enabled/
 sudo nginx -t && sudo systemctl restart nginx
 
 # 8. Start application with PM2
-pm2 start ecosystem.config.js --env production
+pm2 start ecosystem.config.cjs --env production
 pm2 save
 pm2 startup
 ```
@@ -168,7 +170,7 @@ cc2025/
 ├── api/                   # Original Vercel API functions
 ├── dist/                  # Built files (generated)
 ├── server.js              # Express server for production
-├── ecosystem.config.js    # PM2 configuration
+├── ecosystem.config.cjs    # PM2 configuration
 ├── nginx-cloudflare.conf  # Nginx configuration
 ├── deploy.sh             # Deployment script
 ├── server-setup.sh       # Server prerequisites installer
@@ -208,20 +210,27 @@ VITE_API_BASE_URL=https://webappindia.in/api
 - **Solution**: Use `npm install --legacy-peer-deps` (already in `.npmrc`)
 - See [DEPENDENCY-NOTES.md](./DEPENDENCY-NOTES.md) for details
 
+**Issue: `module is not defined in ES module scope`**
+- **Solution**: Use `pm2 start ecosystem.config.cjs` (not `.js`)
+- See [TROUBLESHOOTING.md](./TROUBLESHOOTING.md#error-file-ecosystemconfigjs-malformated)
+
+**Issue: `PM2 is not managing any process`**
+- **Solution**: Start app first: `pm2 start ecosystem.config.cjs --env production`
+- See [TROUBLESHOOTING.md](./TROUBLESHOOTING.md#error-pm2-is-not-managing-any-process)
+
 **Issue: `nginx: command not found`**
 - **Solution**: Install Nginx with `sudo apt install nginx -y`
-- See troubleshooting section in [CLOUDFLARE-SETUP.md](./CLOUDFLARE-SETUP.md)
+- See [TROUBLESHOOTING.md](./TROUBLESHOOTING.md#error-nginx-command-not-found)
 
 **Issue: `pm2: command not found`**
 - **Solution**: Install PM2 with `sudo npm install -g pm2`
-- Or use Systemd alternative: [ALTERNATIVE-DEPLOYMENT.md](./ALTERNATIVE-DEPLOYMENT.md)
+- See [TROUBLESHOOTING.md](./TROUBLESHOOTING.md#error-pm2-command-not-found)
 
 **Issue: 502 Bad Gateway**
 - Check if app is running: `pm2 status`
-- Check logs: `pm2 logs corcon2025`
-- Restart: `pm2 restart corcon2025`
+- See [TROUBLESHOOTING.md](./TROUBLESHOOTING.md#error-502-bad-gateway)
 
-For more troubleshooting, see [QUICK-REFERENCE.md](./QUICK-REFERENCE.md#common-issues--solutions)
+📘 **Complete troubleshooting guide**: [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
 
 ## 📊 Monitoring
 

@@ -333,28 +333,43 @@ sudo systemctl enable nginx
 
 ### Step 8: Start Application with PM2
 
+**IMPORTANT:** Start the application FIRST, then save, then setup startup. Order matters!
+
 ```bash
 # Create logs directory
 mkdir -p logs
 
-# Start the application
-pm2 start ecosystem.config.js --env production
+# 1. START the application (THIS IS REQUIRED FIRST!)
+pm2 start ecosystem.config.cjs --env production
 
-# View application status
+# 2. Verify it's running
 pm2 status
+# You should see corcon2025 with status "online"
 
-# View logs
-pm2 logs corcon2025
+# 3. View logs to check for errors
+pm2 logs corcon2025 --lines 20
 
-# Save PM2 process list
+# 4. Test locally
+curl http://localhost:3000/api/health
+# Should return: {"status":"ok","timestamp":"..."}
+
+# 5. If everything looks good, SAVE the PM2 process list
 pm2 save
 
-# Configure PM2 to start on system boot
+# 6. Configure PM2 to start on system boot
 pm2 startup
 
-# Run the command that PM2 outputs (it will be something like):
-# sudo env PATH=$PATH:/usr/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
+# 7. Copy and run the command that PM2 outputs
+# It will look like one of these:
+# Ubuntu: sudo env PATH=$PATH:/usr/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
+# Bitnami: sudo env PATH=$PATH:/opt/bitnami/node/bin /opt/bitnami/node/lib/node_modules/pm2/bin/pm2 startup systemd -u bitnami --hp /home/bitnami
 ```
+
+**Common Error:**
+If you see `[PM2][WARN] PM2 is not managing any process, skipping save...`, it means you haven't started the application yet. Run `pm2 start ecosystem.config.cjs --env production` first!
+
+**Using a Bitnami Instance?**
+See **[BITNAMI-DEPLOYMENT.md](./BITNAMI-DEPLOYMENT.md)** for Bitnami-specific instructions.
 
 **Alternative: Don't want to use PM2?**
 

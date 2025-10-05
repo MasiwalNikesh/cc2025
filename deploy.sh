@@ -40,9 +40,9 @@ fi
 # Restart or start the application with PM2
 echo "🔄 Restarting application with PM2..."
 if pm2 list | grep -q "corcon2025"; then
-    pm2 restart ecosystem.config.js --env production
+    pm2 restart ecosystem.config.cjs --env production
 else
-    pm2 start ecosystem.config.js --env production
+    pm2 start ecosystem.config.cjs --env production
 fi
 
 # Save PM2 process list

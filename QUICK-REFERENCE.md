@@ -38,6 +38,19 @@
 
 ---
 
+## ⚠️ Using Bitnami Instance?
+
+If you're using **AWS Lightsail Bitnami Node.js** instance (user `bitnami@...`), see:
+📘 **[BITNAMI-DEPLOYMENT.md](./BITNAMI-DEPLOYMENT.md)**
+
+Key differences:
+- User is `bitnami` not `ubuntu`
+- Node.js path: `/opt/bitnami/node/bin/`
+- Apache pre-installed (may conflict with Nginx)
+- Different PM2 startup command
+
+---
+
 ## What You Need
 
 ### Lightsail Instance
@@ -114,7 +127,7 @@ pm2 --version     # Should show pm2 version
 │   ├── out.log
 │   └── combined.log
 ├── server.js                # Express server (replaces Vercel functions)
-├── ecosystem.config.js      # PM2 configuration
+├── ecosystem.config.cjs      # PM2 configuration
 ├── nginx-cloudflare.conf    # Nginx config (copy to /etc/nginx/)
 ├── .env                     # Environment variables (YOU CREATE THIS)
 ├── .env.example             # Example environment file
@@ -130,7 +143,7 @@ pm2 --version     # Should show pm2 version
 
 #### PM2 Commands
 ```bash
-pm2 start ecosystem.config.js --env production  # Start app
+pm2 start ecosystem.config.cjs --env production  # Start app
 pm2 status                                       # Check status
 pm2 logs corcon2025                             # View logs
 pm2 restart corcon2025                          # Restart app
@@ -228,7 +241,7 @@ VITE_API_BASE_URL=https://webappindia.in/api
 - [ ] `.env` file created with actual values
 - [ ] Application built (`npm run build`)
 - [ ] Nginx configured (`/etc/nginx/sites-available/webappindia.in`)
-- [ ] PM2 started (`pm2 start ecosystem.config.js --env production`)
+- [ ] PM2 started (`pm2 start ecosystem.config.cjs --env production`)
 - [ ] PM2 startup configured (`pm2 startup` + `pm2 save`)
 - [ ] Website accessible at https://webappindia.in
 - [ ] SSL certificate working (green padlock)
@@ -276,7 +289,7 @@ See: [ALTERNATIVE-DEPLOYMENT.md](./ALTERNATIVE-DEPLOYMENT.md) for systemd altern
 pm2 status
 
 # If not running, start it
-pm2 start ecosystem.config.js --env production
+pm2 start ecosystem.config.cjs --env production
 
 # Check logs for errors
 pm2 logs corcon2025
