@@ -1,73 +1,269 @@
-# React + TypeScript + Vite
+# CORCON 2025 - Conference Website
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Official website for CORCON 2025 conference, built with React 19, TypeScript, and Vite. Deployed on AWS Lightsail with Cloudflare SSL.
 
-Currently, two official plugins are available:
+## 🚀 Quick Links
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Live Site**: [https://webappindia.in](https://webappindia.in)
+- **Server IP**: 13.200.253.158
+- **Repository**: [https://github.com/MasiwalNikesh/cc2025.git](https://github.com/MasiwalNikesh/cc2025.git)
 
-## React Compiler
+## 📚 Documentation
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Document | Purpose |
+|----------|---------|
+| **[QUICK-REFERENCE.md](./QUICK-REFERENCE.md)** | Architecture, commands, checklist ⭐ **START HERE** |
+| **[CLOUDFLARE-SETUP.md](./CLOUDFLARE-SETUP.md)** | Complete deployment guide |
+| **[ALTERNATIVE-DEPLOYMENT.md](./ALTERNATIVE-DEPLOYMENT.md)** | Systemd & other PM2 alternatives |
+| **[DEPENDENCY-NOTES.md](./DEPENDENCY-NOTES.md)** | React 19 compatibility notes |
+| **[DEPLOYMENT.md](./DEPLOYMENT.md)** | General deployment info |
 
-## Expanding the ESLint configuration
+## 🛠 Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Frontend
+- **React 19.1.1** - Latest React with improved performance
+- **TypeScript** - Type-safe development
+- **Vite 7** - Fast build tool and dev server
+- **Tailwind CSS 4** - Utility-first styling
+- **Framer Motion** - Smooth animations
+- **React Router 6** - Client-side routing
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Backend
+- **Node.js 18+** - JavaScript runtime
+- **Express.js** - Web server framework
+- **Resend** - Transactional email service
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Database & Services
+- **Supabase** - Backend as a Service
+- **Dexie.js** - IndexedDB wrapper for offline support
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Infrastructure
+- **AWS Lightsail** - Cloud hosting (Ubuntu 22.04)
+- **Nginx** - Reverse proxy & web server
+- **PM2** - Process manager
+- **Cloudflare** - DNS, SSL/TLS, CDN, DDoS protection
+
+## 🏗 Architecture
+
+```
+Internet
+   ↓
+Cloudflare (DNS + SSL + CDN)
+   ↓
+AWS Lightsail (13.200.253.158)
+   ├── Nginx (Port 80/443) ← Reverse Proxy
+   ├── PM2 ← Process Manager
+   └── Node.js (Port 3000)
+       ├── Express Server
+       ├── API Endpoints
+       └── Static Files (React App)
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🚀 Deployment
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### First-Time Server Setup
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# 1. SSH to your Lightsail server
+ssh ubuntu@13.200.253.158
+
+# 2. Run automated setup script (installs Node.js, Nginx, PM2, Git)
+wget https://raw.githubusercontent.com/MasiwalNikesh/cc2025/main/server-setup.sh
+bash server-setup.sh
+
+# 3. Clone repository
+cd /home/ubuntu
+git clone https://github.com/MasiwalNikesh/cc2025.git
+cd cc2025
+
+# 4. Install dependencies
+npm install --legacy-peer-deps
+
+# 5. Create environment file
+cp .env.example .env
+nano .env  # Add your API keys
+
+# 6. Build application
+npm run build
+
+# 7. Configure Nginx
+sudo cp nginx-cloudflare.conf /etc/nginx/sites-available/webappindia.in
+sudo ln -s /etc/nginx/sites-available/webappindia.in /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl restart nginx
+
+# 8. Start application with PM2
+pm2 start ecosystem.config.js --env production
+pm2 save
+pm2 startup
 ```
+
+### Future Deployments
+
+```bash
+# SSH to server
+ssh ubuntu@13.200.253.158
+cd /home/ubuntu/cc2025
+
+# Run deployment script
+./deploy.sh
+
+# OR manually
+git pull origin main
+npm install --legacy-peer-deps
+npm run build
+pm2 restart corcon2025
+```
+
+For detailed instructions, see **[CLOUDFLARE-SETUP.md](./CLOUDFLARE-SETUP.md)**
+
+## 💻 Local Development
+
+### Prerequisites
+- Node.js 18 or higher
+- npm 9 or higher
+
+### Setup
+
+```bash
+# Clone repository
+git clone https://github.com/MasiwalNikesh/cc2025.git
+cd cc2025
+
+# Install dependencies
+npm install --legacy-peer-deps
+
+# Copy environment file
+cp .env.example .env
+
+# Add your API keys to .env
+# - VITE_SUPABASE_URL
+# - VITE_SUPABASE_ANON_KEY
+# - RESEND_API_KEY (for email features)
+
+# Start development server
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173)
+
+### Available Scripts
+
+```bash
+npm run dev      # Start dev server
+npm run build    # Build for production
+npm run preview  # Preview production build
+npm run lint     # Run ESLint
+npm run start    # Start production server (after build)
+```
+
+## 📁 Project Structure
+
+```
+cc2025/
+├── src/                    # React application source
+│   ├── components/         # Reusable React components
+│   ├── pages/             # Page components
+│   ├── data/              # Static data
+│   └── lib/               # Utilities
+├── api/                   # Original Vercel API functions
+├── dist/                  # Built files (generated)
+├── server.js              # Express server for production
+├── ecosystem.config.js    # PM2 configuration
+├── nginx-cloudflare.conf  # Nginx configuration
+├── deploy.sh             # Deployment script
+├── server-setup.sh       # Server prerequisites installer
+└── .env                  # Environment variables (create from .env.example)
+```
+
+## 🔧 Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+# Server
+NODE_ENV=production
+PORT=3000
+
+# Supabase
+VITE_SUPABASE_URL=https://xxxxx.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+# Resend (Email)
+RESEND_API_KEY=re_xxxxxxxxxxxxx
+
+# Analytics (Optional)
+VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+
+# App Configuration
+VITE_APP_NAME=CORCON 2025
+VITE_APP_URL=https://webappindia.in
+VITE_API_BASE_URL=https://webappindia.in/api
+```
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**Issue: `npm install` warnings about React 19**
+- **Solution**: Use `npm install --legacy-peer-deps` (already in `.npmrc`)
+- See [DEPENDENCY-NOTES.md](./DEPENDENCY-NOTES.md) for details
+
+**Issue: `nginx: command not found`**
+- **Solution**: Install Nginx with `sudo apt install nginx -y`
+- See troubleshooting section in [CLOUDFLARE-SETUP.md](./CLOUDFLARE-SETUP.md)
+
+**Issue: `pm2: command not found`**
+- **Solution**: Install PM2 with `sudo npm install -g pm2`
+- Or use Systemd alternative: [ALTERNATIVE-DEPLOYMENT.md](./ALTERNATIVE-DEPLOYMENT.md)
+
+**Issue: 502 Bad Gateway**
+- Check if app is running: `pm2 status`
+- Check logs: `pm2 logs corcon2025`
+- Restart: `pm2 restart corcon2025`
+
+For more troubleshooting, see [QUICK-REFERENCE.md](./QUICK-REFERENCE.md#common-issues--solutions)
+
+## 📊 Monitoring
+
+```bash
+# Check application status
+pm2 status
+
+# View logs
+pm2 logs corcon2025
+
+# Monitor CPU/Memory
+pm2 monit
+
+# Check Nginx status
+sudo systemctl status nginx
+
+# View Nginx logs
+sudo tail -f /var/log/nginx/webappindia.error.log
+```
+
+## 🔒 Security
+
+- SSL/TLS provided by Cloudflare
+- Nginx reverse proxy
+- Environment variables for sensitive data
+- CORS configured in Express server
+- Cloudflare DDoS protection
+
+## 📝 License
+
+Private project for CORCON 2025 conference.
+
+## 🤝 Contributing
+
+This is a private project. For issues or questions, contact the development team.
+
+## 📞 Support
+
+- Check logs: `pm2 logs corcon2025`
+- Review documentation in this repository
+- Verify environment variables are set correctly
+
+---
+
+**Built with ❤️ for CORCON 2025**

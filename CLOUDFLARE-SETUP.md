@@ -159,36 +159,92 @@ If needed, block traffic from specific countries:
 
 ## Part 5: Server Deployment (Lightsail)
 
+### Prerequisites: Lightsail Instance Setup
+
+**Important:** You need a **plain Ubuntu instance**, NOT a pre-configured Node.js instance.
+
+#### Which Lightsail Instance to Choose?
+
+1. Go to [AWS Lightsail Console](https://lightsail.aws.amazon.com/)
+2. Create Instance → Choose:
+   - **Platform**: Linux/Unix
+   - **Blueprint**: OS Only → **Ubuntu 22.04 LTS** or **Ubuntu 20.04 LTS**
+   - **Plan**: $5/month (1 GB RAM) is sufficient to start
+3. Set instance name (e.g., "corcon2025-server")
+4. Create instance and wait for it to be running
+
+#### Why Not Use "Node.js" Blueprint?
+
+The Node.js blueprint comes with pre-configured settings that may conflict with our setup. A plain Ubuntu instance gives you full control.
+
+---
+
 ### Step 1: Connect to Your Lightsail Instance
 
 ```bash
 ssh ubuntu@13.200.253.158
 ```
 
-Or use AWS Lightsail browser-based SSH.
+Or use AWS Lightsail browser-based SSH (click "Connect using SSH" button).
 
 ### Step 2: Update System and Install Prerequisites
 
+Run these commands **one by one** on your server:
+
 ```bash
-# Update system packages
+# 1. Update system packages (takes 2-3 minutes)
 sudo apt update && sudo apt upgrade -y
 
-# Install Node.js 18
+# 2. Install Node.js 18 (takes 1-2 minutes)
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
-# Verify installation
-node --version  # Should be v18.x or higher
-npm --version
+# 3. Verify Node.js installation
+node --version  # Should show v18.x or higher
+npm --version   # Should show 9.x or higher
+```
 
-# Install PM2 globally
+**Expected output:**
+```
+v18.19.0
+9.2.0
+```
+
+If Node.js is installed correctly, continue:
+
+```bash
+# 4. Install PM2 globally (IMPORTANT - this manages your app)
 sudo npm install -g pm2
 
-# Install Nginx
+# 5. Verify PM2 installation
+pm2 --version  # Should show version number (e.g., 5.3.0)
+which pm2      # Should show: /usr/bin/pm2
+```
+
+**If PM2 command not found:**
+```bash
+# Fix npm global path issue
+sudo ln -s /usr/lib/node_modules/pm2/bin/pm2 /usr/bin/pm2
+pm2 --version  # Try again
+```
+
+```bash
+# 6. Install Nginx (web server for reverse proxy)
 sudo apt install nginx -y
 
-# Install Git (if not already installed)
+# 7. Verify Nginx installation
+nginx -v  # Should show version
+
+# 8. Install Git (if not already installed)
 sudo apt install git -y
+
+# 9. Verify all installations
+echo "=== Installation Summary ==="
+node --version
+npm --version
+pm2 --version
+nginx -v
+git --version
 ```
 
 ### Step 3: Clone the Repository
@@ -300,6 +356,17 @@ pm2 startup
 # sudo env PATH=$PATH:/usr/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
 ```
 
+**Alternative: Don't want to use PM2?**
+
+If you prefer to use **Systemd** (built-in to Ubuntu) or other process managers instead of PM2, see:
+📘 **[ALTERNATIVE-DEPLOYMENT.md](./ALTERNATIVE-DEPLOYMENT.md)**
+
+Options include:
+- Systemd (recommended alternative)
+- Forever
+- Screen (testing only)
+- Comparison table to help you choose
+
 ### Step 9: Configure Lightsail Firewall
 
 1. Go to [AWS Lightsail Console](https://lightsail.aws.amazon.com/)
@@ -382,6 +449,69 @@ The script automatically:
 ---
 
 ## Troubleshooting
+
+### Issue: nginx: command not found
+
+**Cause:** Nginx is not installed
+
+**Solution:**
+```bash
+# Install Nginx
+sudo apt update
+sudo apt install nginx -y
+
+# Verify installation
+nginx -v
+
+# Start Nginx
+sudo systemctl start nginx
+sudo systemctl enable nginx
+```
+
+### Issue: pm2: command not found
+
+**Cause:** PM2 is not installed or not in PATH
+
+**Solution:**
+```bash
+# Make sure Node.js is installed first
+node --version || { echo "Install Node.js first!"; exit 1; }
+
+# Install PM2
+sudo npm install -g pm2
+
+# If still not found, create symlink
+sudo ln -s /usr/lib/node_modules/pm2/bin/pm2 /usr/bin/pm2
+
+# Verify
+pm2 --version
+```
+
+### Issue: node: command not found
+
+**Cause:** Node.js is not installed
+
+**Solution:**
+```bash
+# Install Node.js 18
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# Verify
+node --version
+npm --version
+```
+
+**Quick Fix: Install All Prerequisites at Once**
+```bash
+# Download and run automated setup script
+wget https://raw.githubusercontent.com/MasiwalNikesh/cc2025/main/server-setup.sh
+bash server-setup.sh
+```
+
+Or see **server-setup.sh** in the repository for manual step-by-step commands.
+
+---
 
 ### Issue: Website Not Loading
 

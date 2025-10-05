@@ -9,12 +9,44 @@ This guide provides step-by-step instructions for deploying the CORCON 2025 webs
 - **Git Repository**: https://github.com/MasiwalNikesh/cc2025.git
 - **Server**: AWS Lightsail Node.js Instance
 
+## Documentation Overview
+
+| Document | Purpose | When to Use |
+|----------|---------|-------------|
+| **[QUICK-REFERENCE.md](./QUICK-REFERENCE.md)** | Architecture diagram, essential commands, checklist | Start here for overview |
+| **[CLOUDFLARE-SETUP.md](./CLOUDFLARE-SETUP.md)** | Complete step-by-step deployment with Cloudflare | Follow for first deployment |
+| **[ALTERNATIVE-DEPLOYMENT.md](./ALTERNATIVE-DEPLOYMENT.md)** | Systemd, Forever, other PM2 alternatives | If PM2 doesn't work or you prefer systemd |
+| **[DEPENDENCY-NOTES.md](./DEPENDENCY-NOTES.md)** | React 19 peer dependency explanation | If you see npm warnings |
+| **[DEPLOYMENT.md](./DEPLOYMENT.md)** | This file - overview and Let's Encrypt option | General reference |
+
+---
+
 ## Quick Start
 
-To deploy to your Lightsail server (13.200.253.158) with Cloudflare:
+### Step 1: Install Prerequisites (If not already done)
 
 ```bash
-# 1. SSH to server
+# SSH to your server
+ssh ubuntu@13.200.253.158
+
+# Option A: Automated installation (Recommended)
+wget https://raw.githubusercontent.com/MasiwalNikesh/cc2025/main/server-setup.sh
+bash server-setup.sh
+
+# Option B: Manual installation
+sudo apt update && sudo apt upgrade -y
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs
+sudo apt install nginx git -y
+sudo npm install -g pm2
+```
+
+### Step 2: Deploy Application
+
+**Prerequisites:** Ubuntu instance at 13.200.253.158 with Node.js 18, Nginx, and PM2 installed
+
+```bash
+# 1. SSH to server (if not already connected)
 ssh ubuntu@13.200.253.158
 
 # 2. Clone repository
@@ -37,7 +69,9 @@ pm2 save
 pm2 startup
 ```
 
-For detailed instructions, see the deployment options below.
+**Need detailed installation instructions?** See [CLOUDFLARE-SETUP.md](./CLOUDFLARE-SETUP.md)
+
+**PM2 not working?** See [ALTERNATIVE-DEPLOYMENT.md](./ALTERNATIVE-DEPLOYMENT.md)
 
 ---
 
