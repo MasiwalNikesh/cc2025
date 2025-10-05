@@ -19,7 +19,7 @@ git pull origin main
 
 # Install dependencies
 echo "📦 Installing dependencies..."
-npm install
+npm install --legacy-peer-deps
 
 # Build the project
 echo "🔨 Building the project..."

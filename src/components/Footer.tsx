@@ -1,5 +1,4 @@
 import { MapPin, Phone, Mail, Globe } from "lucide-react";
-import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -116,12 +115,6 @@ const Footer = () => {
           <p className="text-white/50 text-xs">
             50:50 Joint Venture - Asian Paints Limited × PPG Industries, USA
           </p>
-          {/* <Link
-            to="/admin"
-            className="inline-block mt-3 text-white/30 hover:text-white/60 text-xs transition-colors"
-          >
-            Admin
-          </Link> */}
         </div>
       </div>
     </footer>

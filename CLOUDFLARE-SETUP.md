@@ -202,8 +202,10 @@ cd cc2025
 ### Step 4: Install Dependencies
 
 ```bash
-npm install
+npm install --legacy-peer-deps
 ```
+
+**Note:** We use `--legacy-peer-deps` because this project uses React 19, but some dependencies (like `resend` for email) still require React 18. The `.npmrc` file in the project handles this automatically, but the flag is included for clarity.
 
 This will install all production and development dependencies.
 
@@ -359,7 +361,7 @@ For updating the application after initial deployment:
 ```bash
 cd /home/ubuntu/cc2025
 git pull origin main
-npm install
+npm install --legacy-peer-deps
 npm run build
 pm2 restart corcon2025
 ```
@@ -454,6 +456,25 @@ If logs show Cloudflare IPs instead of visitor IPs:
 2. Verify API endpoints are working: `curl https://webappindia.in/api/health`
 3. Check CORS settings in `server.js`
 4. Review PM2 logs: `pm2 logs corcon2025`
+
+### Issue: NPM Peer Dependency Warnings
+
+If you see warnings about React version conflicts during `npm install`:
+
+```
+npm warn Could not resolve dependency:
+npm warn peer react@"^18.2.0" from @react-email/render
+```
+
+**This is normal and safe to ignore.** The project uses React 19, but some packages (like `resend`) depend on libraries that still expect React 18.
+
+**Solution:**
+```bash
+# Use the --legacy-peer-deps flag (already in .npmrc and deploy.sh)
+npm install --legacy-peer-deps
+```
+
+The `.npmrc` file in the project root automatically handles this, so you typically don't need to add the flag manually.
 
 ---
 

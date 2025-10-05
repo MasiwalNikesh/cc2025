@@ -55,5 +55,9 @@
     "vite": "^7.1.7",
     "vite-plugin-image-optimizer": "^1.1.8",
     "vite-plugin-pwa": "^0.19.0"
+  },
+  "overrides": {
+    "react": "$react",
+    "react-dom": "$react-dom"
   }
 }
